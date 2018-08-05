@@ -96,20 +96,24 @@ Success response:
 ```json
 {
   "msg": "ok",
-  "results": [
-    {
-      "questionText": "What is the world's longest river?",
-      "answeredCorrectly": true,
-      "correctAnswer": "Amazon",
-      "userAnswer": "Amazon"
-    },
-    {
-      "questionText": "Name the world's biggest island.",
-      "answeredCorrectly": false,
-      "correctAnswer": "Greenland",
-      "userAnswer": "Australia"
-    }
-  ],
+  "results": {
+    "percentile": 33,
+    "correctAnswersPerc": 50,
+    "questionsResults": [
+      {
+        "questionText": "What is the world's longest river?",
+        "answeredCorrectly": true,
+        "correctAnswer": "Amazon",
+        "userAnswer": "Amazon"
+      },
+      {
+        "questionText": "Name the world's biggest island.",
+        "answeredCorrectly": false,
+        "correctAnswer": "Greenland",
+        "userAnswer": "Australia"
+      }
+    ]
+  },
   "status": 200
 }
 ```

@@ -15,6 +15,7 @@ type API struct {
 	listener  net.Listener
 	mux       *bone.Mux
 	questions questions.Questions
+	results   []int
 }
 
 // New returns new API.

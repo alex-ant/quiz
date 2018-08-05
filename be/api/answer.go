@@ -5,6 +5,7 @@ import (
 	"errors"
 	"io/ioutil"
 	"net/http"
+	"sort"
 )
 
 type answerRequest []struct {
@@ -25,11 +26,17 @@ func (a *API) validateAnswerRequest(req answerRequest) error {
 	return nil
 }
 
-type answerResponse struct {
+type answerResponseQuestionsResults struct {
 	QuestionText      string `json:"questionText"`
 	AnsweredCorrectly bool   `json:"answeredCorrectly"`
 	CorrectAnswer     string `json:"correctAnswer"`
 	UserAnswer        string `json:"userAnswer"`
+}
+
+type answerResponse struct {
+	CorrectAnswersPerc int                              `json:"correctAnswersPerc"`
+	Percentile         int                              `json:"percentile"`
+	QuestionsResults   []answerResponseQuestionsResults `json:"questionsResults"`
 }
 
 func (a *API) answerHandler(w http.ResponseWriter, r *http.Request) {
@@ -55,17 +62,44 @@ func (a *API) answerHandler(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	var resp []answerResponse
+	var res []answerResponseQuestionsResults
+	var correctAnswers int
 	for _, answer := range data {
 		// Validate the answer.
 		qText, qAnswer := a.questions.GetAnswer(answer.QuestionID)
 
-		resp = append(resp, answerResponse{
+		answeredCorrectly := answer.Answer == qAnswer
+		if answeredCorrectly {
+			correctAnswers++
+		}
+
+		res = append(res, answerResponseQuestionsResults{
 			QuestionText:      qText,
-			AnsweredCorrectly: answer.Answer == qAnswer,
+			AnsweredCorrectly: answeredCorrectly,
 			CorrectAnswer:     qAnswer,
 			UserAnswer:        answer.Answer,
 		})
+	}
+
+	// Calculate results.
+	resultPercentage := correctAnswers * 100 / len(a.questions)
+	a.results = append(a.results, resultPercentage)
+
+	sort.Ints(a.results)
+
+	var percentile int
+	for i, r := range a.results {
+		if r == resultPercentage {
+			percentile = i * 100 / len(a.results)
+			break
+		}
+	}
+
+	// Assemble response.
+	resp := answerResponse{
+		QuestionsResults:   res,
+		Percentile:         percentile,
+		CorrectAnswersPerc: resultPercentage,
 	}
 
 	respond("results", resp, "ok", http.StatusOK, w)

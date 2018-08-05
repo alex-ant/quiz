@@ -24,44 +24,92 @@ func TestAnswer(t *testing.T) {
 		expectedBody   map[string]interface{}
 	}{
 		{
-			description: "Correct answer",
+			description: "Correct answers",
 			body: []map[string]interface{}{
 				map[string]interface{}{
 					"questionID": 1,
 					"answer":     "ca1",
 				},
+				map[string]interface{}{
+					"questionID": 2,
+					"answer":     "ca2",
+				},
+				map[string]interface{}{
+					"questionID": 3,
+					"answer":     "ca3",
+				},
 			},
 			expectedStatus: http.StatusOK,
 			expectedBody: map[string]interface{}{
 				"msg": "ok",
-				"results": []map[string]interface{}{
-					map[string]interface{}{
-						"questionText":      "q1",
-						"answeredCorrectly": true,
-						"correctAnswer":     "ca1",
-						"userAnswer":        "ca1",
+				"results": map[string]interface{}{
+					"percentile":         0,
+					"correctAnswersPerc": 100,
+					"questionsResults": []map[string]interface{}{
+						map[string]interface{}{
+							"questionText":      "q1",
+							"answeredCorrectly": true,
+							"correctAnswer":     "ca1",
+							"userAnswer":        "ca1",
+						},
+						map[string]interface{}{
+							"questionText":      "q2",
+							"answeredCorrectly": true,
+							"correctAnswer":     "ca2",
+							"userAnswer":        "ca2",
+						},
+						map[string]interface{}{
+							"questionText":      "q3",
+							"answeredCorrectly": true,
+							"correctAnswer":     "ca3",
+							"userAnswer":        "ca3",
+						},
 					},
 				},
 				"status": http.StatusOK,
 			},
 		},
 		{
-			description: "Incorrect answer",
+			description: "Incorrect answers",
 			body: []map[string]interface{}{
 				map[string]interface{}{
 					"questionID": 1,
+					"answer":     "xxx",
+				},
+				map[string]interface{}{
+					"questionID": 2,
+					"answer":     "xxx",
+				},
+				map[string]interface{}{
+					"questionID": 3,
 					"answer":     "xxx",
 				},
 			},
 			expectedStatus: http.StatusOK,
 			expectedBody: map[string]interface{}{
 				"msg": "ok",
-				"results": []map[string]interface{}{
-					map[string]interface{}{
-						"questionText":      "q1",
-						"answeredCorrectly": false,
-						"correctAnswer":     "ca1",
-						"userAnswer":        "xxx",
+				"results": map[string]interface{}{
+					"percentile":         0,
+					"correctAnswersPerc": 0,
+					"questionsResults": []map[string]interface{}{
+						map[string]interface{}{
+							"questionText":      "q1",
+							"answeredCorrectly": false,
+							"correctAnswer":     "ca1",
+							"userAnswer":        "xxx",
+						},
+						map[string]interface{}{
+							"questionText":      "q2",
+							"answeredCorrectly": false,
+							"correctAnswer":     "ca2",
+							"userAnswer":        "xxx",
+						},
+						map[string]interface{}{
+							"questionText":      "q3",
+							"answeredCorrectly": false,
+							"correctAnswer":     "ca3",
+							"userAnswer":        "xxx",
+						},
 					},
 				},
 				"status": http.StatusOK,
@@ -78,22 +126,36 @@ func TestAnswer(t *testing.T) {
 					"questionID": 2,
 					"answer":     "xxx",
 				},
+				map[string]interface{}{
+					"questionID": 3,
+					"answer":     "ca3",
+				},
 			},
 			expectedStatus: http.StatusOK,
 			expectedBody: map[string]interface{}{
 				"msg": "ok",
-				"results": []map[string]interface{}{
-					map[string]interface{}{
-						"questionText":      "q1",
-						"answeredCorrectly": true,
-						"correctAnswer":     "ca1",
-						"userAnswer":        "ca1",
-					},
-					map[string]interface{}{
-						"questionText":      "q2",
-						"answeredCorrectly": false,
-						"correctAnswer":     "ca2",
-						"userAnswer":        "xxx",
+				"results": map[string]interface{}{
+					"percentile":         33,
+					"correctAnswersPerc": 66,
+					"questionsResults": []map[string]interface{}{
+						map[string]interface{}{
+							"questionText":      "q1",
+							"answeredCorrectly": true,
+							"correctAnswer":     "ca1",
+							"userAnswer":        "ca1",
+						},
+						map[string]interface{}{
+							"questionText":      "q2",
+							"answeredCorrectly": false,
+							"correctAnswer":     "ca2",
+							"userAnswer":        "xxx",
+						},
+						map[string]interface{}{
+							"questionText":      "q3",
+							"answeredCorrectly": true,
+							"correctAnswer":     "ca3",
+							"userAnswer":        "ca3",
+						},
 					},
 				},
 				"status": http.StatusOK,
