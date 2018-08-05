@@ -4,8 +4,6 @@ import (
 	"math/rand"
 	"net/http"
 	"time"
-
-	"github.com/alex-ant/quiz/be/questions"
 )
 
 type getQuestionsResp struct {
@@ -16,7 +14,7 @@ type getQuestionsResp struct {
 
 func (a *API) getQuestionsHandler(w http.ResponseWriter, r *http.Request) {
 	var resp []getQuestionsResp
-	for _, q := range questions.Questions {
+	for _, q := range a.questions {
 		// Shuffle answers.
 		answers := append(q.IncorrectAnswers, q.CorrectAnswer)
 

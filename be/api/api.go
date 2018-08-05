@@ -5,20 +5,23 @@ import (
 	"net/http"
 	"strconv"
 
+	"github.com/alex-ant/quiz/be/questions"
 	"github.com/go-zoo/bone"
 )
 
 // API contains HTTP server's settings.
 type API struct {
-	port     int
-	listener net.Listener
-	mux      *bone.Mux
+	port      int
+	listener  net.Listener
+	mux       *bone.Mux
+	questions questions.Questions
 }
 
 // New returns new API.
-func New(port int) *API {
+func New(port int, questions questions.Questions) *API {
 	return &API{
-		port: port,
+		port:      port,
+		questions: questions,
 	}
 }
 
@@ -26,6 +29,7 @@ func (a *API) defineMux() {
 	a.mux = bone.New()
 
 	a.mux.Get("/questions", http.HandlerFunc(a.getQuestionsHandler))
+	a.mux.Post("/answer", http.HandlerFunc(a.answerHandler))
 }
 
 // Start starts the HTTP server.

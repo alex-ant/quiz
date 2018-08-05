@@ -11,7 +11,7 @@ import (
 
 func TestGetQuestions(t *testing.T) {
 	// Initialize test server.
-	testAPI := New(0)
+	testAPI := New(0, mockedQuestions)
 	testAPI.defineMux()
 
 	testSrv := httptest.NewServer(testAPI.mux)

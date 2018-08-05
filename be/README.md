@@ -17,6 +17,7 @@ The questions reside in `questions.json` file. Each question is represented as a
 ### API
 
 * [GET /questions](#get_questions) - Get a shuffled list of questions.
+* [POST /answer](#post_answer) - Submit answers and get the results.
 
 #### <a name="get_questions"></a>GET /questions
 
@@ -70,3 +71,45 @@ Success response:
 ```
 
 Both the list of questions and each question's answers are shuffled upon each request.
+
+#### <a name="post_answer"></a>POST /answer
+
+*Submit answers and get the results.*
+
+Sample request:
+
+```
+curl 'http://localhost:30303/answer' -d '[
+  {
+    "questionID": 1,
+    "answer": "Amazon"
+  },
+  {
+    "questionID": 2,
+    "answer": "Australia"
+  }
+]'
+```
+
+Success response:
+
+```json
+{
+  "msg": "ok",
+  "results": [
+    {
+      "questionText": "What is the world's longest river?",
+      "answeredCorrectly": true,
+      "correctAnswer": "Amazon",
+      "userAnswer": "Amazon"
+    },
+    {
+      "questionText": "Name the world's biggest island.",
+      "answeredCorrectly": false,
+      "correctAnswer": "Greenland",
+      "userAnswer": "Australia"
+    }
+  ],
+  "status": 200
+}
+```

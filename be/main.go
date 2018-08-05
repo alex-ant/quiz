@@ -25,13 +25,13 @@ func shutdown() {
 
 func main() {
 	// Read questions from file.
-	qErr := questions.Read()
+	q, qErr := questions.Read()
 	if qErr != nil {
 		log.Fatal(qErr)
 	}
 
 	// Initialize API HTTP server.
-	apiServer = api.New(*params.APIPort)
+	apiServer = api.New(*params.APIPort, q)
 
 	// Start API HTTP server.
 	apiStartErr := apiServer.Start()
