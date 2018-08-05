@@ -1,0 +1,10 @@
+version: '2'
+services:
+  be:
+    image: quiz_be:latest
+    environment:
+      - API_PORT=30303
+    ports:
+      - "30303:30303"
+    expose:
+      - "30303"
