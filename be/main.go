@@ -8,6 +8,7 @@ import (
 
 	"github.com/alex-ant/quiz/be/api"
 	"github.com/alex-ant/quiz/be/params"
+	"github.com/alex-ant/quiz/be/questions"
 )
 
 var apiServer *api.API
@@ -23,6 +24,12 @@ func shutdown() {
 }
 
 func main() {
+	// Read questions from file.
+	qErr := questions.Read()
+	if qErr != nil {
+		log.Fatal(qErr)
+	}
+
 	// Initialize API HTTP server.
 	apiServer = api.New(*params.APIPort)
 
