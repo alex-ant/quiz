@@ -109,7 +109,7 @@ func TestAnswer(t *testing.T) {
 			},
 			expectedStatus: http.StatusBadRequest,
 			expectedBody: map[string]interface{}{
-				"msg":    "invalid question ID received",
+				"msg":    "invalid questionID",
 				"status": http.StatusBadRequest,
 			},
 		},
@@ -123,7 +123,21 @@ func TestAnswer(t *testing.T) {
 			},
 			expectedStatus: http.StatusBadRequest,
 			expectedBody: map[string]interface{}{
-				"msg":    "invalid question ID received",
+				"msg":    "invalid questionID",
+				"status": http.StatusBadRequest,
+			},
+		},
+		{
+			description: "Empty answer",
+			body: []map[string]interface{}{
+				map[string]interface{}{
+					"questionID": 1,
+					"answer":     "",
+				},
+			},
+			expectedStatus: http.StatusBadRequest,
+			expectedBody: map[string]interface{}{
+				"msg":    "empty answer",
 				"status": http.StatusBadRequest,
 			},
 		},

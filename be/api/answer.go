@@ -2,6 +2,7 @@ package api
 
 import (
 	"encoding/json"
+	"errors"
 	"io/ioutil"
 	"net/http"
 )
@@ -9,6 +10,19 @@ import (
 type answerRequest []struct {
 	QuestionID int    `json:"questionID"`
 	Answer     string `json:"answer"`
+}
+
+func (a *API) validateAnswerRequest(req answerRequest) error {
+	for _, answer := range req {
+		switch {
+		case answer.Answer == "":
+			return errors.New("empty answer")
+		case answer.QuestionID > len(a.questions) || answer.QuestionID < 1:
+			return errors.New("invalid questionID")
+		}
+	}
+
+	return nil
 }
 
 type answerResponse struct {
@@ -34,14 +48,15 @@ func (a *API) answerHandler(w http.ResponseWriter, r *http.Request) {
 	}
 	r.Body.Close()
 
+	// Validate request.
+	vErr := a.validateAnswerRequest(data)
+	if vErr != nil {
+		respond("", nil, vErr.Error(), http.StatusBadRequest, w)
+		return
+	}
+
 	var resp []answerResponse
 	for _, answer := range data {
-		// Validate question ID.
-		if answer.QuestionID > len(a.questions) || answer.QuestionID < 1 {
-			respond("", nil, "invalid question ID received", http.StatusBadRequest, w)
-			return
-		}
-
 		// Validate the answer.
 		qText, qAnswer := a.questions.GetAnswer(answer.QuestionID)
 
