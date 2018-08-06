@@ -4,3 +4,7 @@
 cd be
 ./build.sh
 cd ..
+
+# build FE
+cd fe/quiz
+./build.sh

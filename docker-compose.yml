@@ -1,5 +1,9 @@
 version: '2'
 services:
+  fe:
+    image: quiz_fe:latest
+    ports:
+      - "80:80"
   be:
     image: quiz_be:latest
     environment:
