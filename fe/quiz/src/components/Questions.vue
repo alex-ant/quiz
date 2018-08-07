@@ -3,15 +3,15 @@
     <div class="row">
       <div class='hidden-xs col-sm-2 col-md-2 col-lg-2'></div>
       <div class='col-xs-12 col-sm-8 col-md-8 col-lg-8'>
-        
+
         <h1>Quiz</h1>
-        
+
         <br/>
-        
+
         <div v-if="resultsAvailable">
           Correctly answered: {{results.correctAnswersPerc}}%
           <br/>
-          
+
           You did better than {{results.percentile}}% of players
           <br/>
           <br/>
@@ -19,49 +19,49 @@
 
         <div v-for="question in questions" class="container question-box" v-if="!resultsAvailable">
           <h2>{{question.text}}</h2>
-          
+
           <br/>
 
           <div class="row">
             <div class='col-xs-6 col-sm-6 col-md-6 col-lg-6'>
-              <button v-on:click="selectAnswer(question.id, question.answers[0])" type="button" class="btn answer-btn">{{question.answers[0]}}</button>
+              <button v-on:click="selectAnswer(question.id, question.answers[0], 0)" :id="'0' + question.id" type="button" class="btn answer-btn">{{question.answers[0]}}</button>
             </div>
             <div class='col-xs-6 col-sm-6 col-md-6 col-lg-6'>
-              <button v-on:click="selectAnswer(question.id, question.answers[1])" type="button" class="btn answer-btn">{{question.answers[1]}}</button>
+              <button v-on:click="selectAnswer(question.id, question.answers[1], 1)" :id="'1' + question.id" type="button" class="btn answer-btn">{{question.answers[1]}}</button>
             </div>
           </div>
-          
+
           <br/>
-          
+
           <div class="row">
             <div class='col-xs-6 col-sm-6 col-md-6 col-lg-6'>
-              <button v-on:click="selectAnswer(question.id, question.answers[2])" type="button" class="btn answer-btn">{{question.answers[2]}}</button>
+              <button v-on:click="selectAnswer(question.id, question.answers[2], 2)" :id="'2' + question.id" type="button" class="btn answer-btn">{{question.answers[2]}}</button>
             </div>
             <div class='col-xs-6 col-sm-6 col-md-6 col-lg-6'>
-              <button v-on:click="selectAnswer(question.id, question.answers[3])" type="button" class="btn answer-btn">{{question.answers[3]}}</button>
+              <button v-on:click="selectAnswer(question.id, question.answers[3], 3)" :id="'3' + question.id" type="button" class="btn answer-btn">{{question.answers[3]}}</button>
             </div>
           </div>
-          
+
         </div>
-        
+
         <div v-for="result in results.questionsResults" class="container question-box" v-if="resultsAvailable">
           <span v-if="result.answeredCorrectly" class="correct">CORRECT</span>
           <span v-else class="incorrect">INCORRECT</span>
-          
+
           <h2>{{result.questionText}}</h2>
-          
+
           Your answer: {{result.userAnswer}}
-          
+
           <br/>
-          
+
           Correct answer: {{result.correctAnswer}}
-          
+
           <br/>
         </div>
-        
+
         <button v-on:click="submit()" type="button" class="btn answer-btn" v-if="!resultsAvailable">Submit answers</button>
         <button v-on:click="tryAgain()" type="button" class="btn answer-btn" v-else>Try one more time</button>
-        
+
         <br/>
         <br/>
 
@@ -87,12 +87,23 @@ export default {
     }
   },
   methods: {
-    selectAnswer: function(questionID, answer) {
+    selectAnswer: function(questionID, answer, btnID) {
       this.answers[questionID] = answer;
+
+      // Set hit button to active.
+      document.getElementById(btnID.toString() + questionID).className += " active";
+
+      // Set the rest of the buttons to inactive.
+      for (let i = 0; i < 4; i++) {
+        if (i !== btnID) {
+          let elID = i.toString() + questionID;
+          document.getElementById(elID).className = document.getElementById(elID).className.replace( /(?:^|\s)active(?!\S)/g , '' );
+        }
+      }
     },
     submit: function() {
       let answersReq = [];
-      
+
       for (var questionID in this.answers) {
         if (this.answers.hasOwnProperty(questionID)) {
           answersReq.push({
@@ -101,7 +112,7 @@ export default {
           });
         }
       }
-      
+
       axios.post(beURL + '/answer', answersReq)
       .then((response) => {
         this.results = response.data.results;
@@ -147,6 +158,10 @@ export default {
   color: #fff;
   font-family: "Montserrat";
   width: 150px;
+}
+.active {
+  background-color: #00e600;
+  color: #000;
 }
 .correct {
   color: #00b33c;
